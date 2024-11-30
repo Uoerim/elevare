@@ -1,11 +1,46 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function Home() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+    if (token) {
+      const tokenValue = token.split('=')[1];
+      console.log('Token exists:', tokenValue);
+
+      // Check if the token exists in the database
+      const checkToken = async () => {
+        try {
+          const response = await fetch('/api/check-token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token: tokenValue }),
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            console.log('Token is valid:', data);
+            window.location.href = '/app';
+          } else {
+            console.error('Invalid token:', data.error);
+          }
+        } catch (error) {
+          console.error('Error checking token:', error);
+        }
+      };
+
+      checkToken();
+    } else {
+      console.log('No token found');
+    }
+  }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
