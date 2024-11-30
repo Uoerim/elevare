@@ -22,9 +22,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const client = await pool.connect();
       try {
-        const result = await client.query('SELECT id FROM elevare_users WHERE username = $1 AND password = $2', [username, password]);
+        const result = await client.query('SELECT token FROM elevare_users WHERE username = $1 AND password = $2', [username, password]);
         if (result.rows.length > 0) {
-          res.status(200).json({ id: result.rows[0].id });
+          res.status(200).json({ token: result.rows[0].token });
         } else {
           res.status(404).json({ error: 'User not found' });
         }

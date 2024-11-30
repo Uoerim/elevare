@@ -10,7 +10,6 @@ export default function Home() {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -22,7 +21,9 @@ export default function Home() {
 
       const data = await response.json();
       if (response.ok) {
-        console.log('User ID:', data.id);
+        console.log('User ID:', data.token);
+        document.cookie = `token=${data.token}; path=/; max-age=3600;`;
+        window.location.href = '/app';
       } else {
         setError(data.error);
         console.error('Error:', data.error);
@@ -80,13 +81,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-center justify-between">
                   <button
-                    className="bg-customColor2 hover:bg-blue-700 hover:brightness-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+                    className="bg-customColor2 hover:brightness-75 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
                     type="submit"
                   >
                     Sign In
                   </button>
                   <a
-                    className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 transition duration-300"
+                    className="inline-block align-baseline font-bold text-sm text-customColor2 hover:brightness-75 transition duration-300"
                     href="#"
                   >
                     Forgot Password?
